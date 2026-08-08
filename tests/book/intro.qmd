@@ -1,0 +1,18 @@
+# はじめに
+
+本文です。@fig-a を参照します。引用も試します [@okumura2025js]。
+
+```{r}
+#| label: fig-a
+#| fig-cap: "章ごとに番号が付く図"
+#| echo: false
+plot(1:10, 1:10, xlab = "x", ylab = "y")
+```
+
+## 節
+
+節の本文。@eq-one も参照します。
+
+$$
+y = \alpha + \beta x
+$$ {#eq-one}

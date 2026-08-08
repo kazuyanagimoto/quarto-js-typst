@@ -1,0 +1,7 @@
+.git/
+.github/
+.quarto/
+docs/
+img/
+README.md
+_quarto.yml

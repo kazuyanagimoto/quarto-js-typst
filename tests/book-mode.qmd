@@ -1,0 +1,18 @@
+---
+title: "book: true の確認"
+book: true
+toc: true
+format: jsarticle-typst
+---
+
+# 第一の章
+
+本文です。行送りが本文グリッドに乗ります。
+
+## 節
+
+節の本文。
+
+# 第二の章
+
+こちらは奇数ページ起こしになります。

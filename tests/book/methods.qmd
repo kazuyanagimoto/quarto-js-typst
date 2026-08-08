@@ -1,0 +1,10 @@
+# 手法
+
+二つ目の章です。@fig-b を参照します。
+
+```{r}
+#| label: fig-b
+#| fig-cap: "二章目の図"
+#| echo: false
+plot(10:1, 1:10, xlab = "x", ylab = "y")
+```

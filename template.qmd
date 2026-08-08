@@ -1,0 +1,94 @@
+---
+title: "Quarto で jsarticle 風の Typst 文書を書く"
+subtitle: "jsarticle-typst テンプレート"
+author:
+  - name: 柳本 和春
+    affiliation: CEMFI
+    email: kazuharu.yanagimoto@cemfi.edu.es
+date: 2026-08-08
+abstract: |
+  Haruhiko Okumura 氏の Typst パッケージ `js` を Quarto の Typst
+  フォーマットに接続したテンプレートです. LaTeX の jsarticle
+  に近い版面 (行送り・字送りのグリッド, 見出し回りのアキ) を保ちながら,
+  Quarto の相互参照・引用・コードセルをそのまま使えます.
+keywords:
+  - Quarto
+  - Typst
+  - 日本語組版
+bibliography: references.bib
+toc: true
+format:
+  jsarticle-typst: default
+---
+
+# はじめに
+
+本テンプレートは, LaTeX の jsarticle 相当の版面を Typst で再現する
+`js` パッケージ [@okumura2025js] を Quarto から使えるようにしたものです.
+段落の先頭は全角一字下げになり, 本文は行送りのグリッドに乗ります.
+
+英数字は欧文フォント, 仮名漢字は和文フォントで組まれます. たとえば
+Quarto と Typst のように混植しても, ベースラインは崩れません.
+
+## 書体の指定
+
+`seriffont` などのオプションで書体を差し替えられます.
+**強調**は和文ゴシック体, *斜体*は欧文イタリックになります.
+
+# 数式
+
+行中の数式 $y = \alpha + \beta x$ も, 別行立ての数式も使えます.
+
+$$
+\left( \int_0^\infty \frac{\sin x}{\sqrt{x}} \, dx \right)^2
+  = \sum_{k=0}^\infty \frac{(2k)!}{2^{2k}(k!)^2} \frac{1}{2k+1}
+  = \frac{\pi}{2}
+$$ {#eq-integral}
+
+@eq-integral は `js` パッケージの例に載っている等式です.
+
+# 図表
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "がくの長さと幅の関係"
+#| fig-width: 5
+#| fig-height: 3
+#| echo: false
+#| warning: false
+
+library(ggplot2)
+
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point() +
+  labs(x = "Sepal length (cm)", y = "Sepal width (cm)", color = NULL) +
+  theme_minimal(base_size = 10)
+```
+
+@fig-scatter は R のチャンクから生成した図です.
+
+| 品種 | 標本数 | 平均がく長 |
+|:-----|-------:|-----------:|
+| setosa | 50 | 5.01 |
+| versicolor | 50 | 5.94 |
+| virginica | 50 | 6.59 |
+
+: 品種別の要約 {#tbl-summary}
+
+@tbl-summary のように, 表の見出しは表の上に置かれます.
+
+# その他の要素
+
+脚注も使えます[^1].
+
+[^1]: 脚注は本文と同じグリッドの下に組まれます.
+
+> 引用ブロックは左に二字分の字下げが入ります.
+
+::: {.callout-note}
+## 補足
+Quarto の callout もそのまま使えます.
+:::
+
+`js` パッケージのマクロも利用できます. たとえばルビは
+`#ruby[科][か]` のように書けます.

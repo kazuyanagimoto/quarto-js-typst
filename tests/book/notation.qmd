@@ -1,0 +1,10 @@
+# 記号一覧
+
+付録です。@fig-c を参照します。
+
+```{r}
+#| label: fig-c
+#| fig-cap: "付録の図"
+#| echo: false
+plot(1:5, 5:1, xlab = "x", ylab = "y")
+```

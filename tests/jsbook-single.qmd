@@ -1,0 +1,26 @@
+---
+title: "単一ファイルの jsbook"
+subtitle: "book プロジェクトでない場合"
+author: "柳本 和春"
+date: "2026-08-08"
+format: jsbook-typst
+---
+
+# 第一の章
+
+本文です。@fig-single を参照します。
+
+```{r}
+#| label: fig-single
+#| fig-cap: "単一ファイルでの図"
+#| echo: false
+plot(1:5, 1:5, xlab = "x", ylab = "y")
+```
+
+## 節
+
+節の本文。
+
+# 第二の章
+
+こちらは奇数ページ起こしになります。

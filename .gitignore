@@ -1,0 +1,14 @@
+.quarto/
+/_site/
+.DS_Store
+*_files/
+*.typ
+!_extensions/**/*.typ
+
+**/*.quarto_ipynb
+
+tests/**/*.pdf
+tests/book/_book/
+
+/.quarto/
+*.pdf

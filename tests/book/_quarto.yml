@@ -1,0 +1,23 @@
+project:
+  type: book
+
+book:
+  title: "Quarto で書く jsbook"
+  subtitle: "Typst 版 jsbook のテスト"
+  author: "柳本 和春"
+  date: "2026-08-08"
+  chapters:
+    - index.qmd
+    - part: "第一部のタイトル"
+      chapters:
+        - intro.qmd
+        - methods.qmd
+    - part: "第二部のタイトル"
+      chapters:
+        - results.qmd
+  appendices:
+    - notation.qmd
+
+bibliography: references.bib
+
+format: jsbook-typst
