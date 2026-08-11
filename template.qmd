@@ -85,6 +85,14 @@ ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
 
 > 引用ブロックは左に二字分の字下げが入ります.
 
+`js` のマクロは shortcode で書けます. {{< ruby 科 か >}} のようにルビを振ったり,
+{{< kintou 5em 超電磁砲 >}} のように均等割りしたり, {{< tex >}} や
+{{< latex >}} のロゴを出せます.
+
+::: {.noindent}
+この段落は `.noindent` の div に入っているので, 字下げされません.
+:::
+
 ::: {.callout-note}
 ## 補足
 Quarto の callout もそのまま使えます.

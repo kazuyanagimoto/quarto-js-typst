@@ -161,15 +161,39 @@ YAML に直接書いたキー（`mainfont`, `fontsize`, `codefont`, `linkcolor` 
 - `logo` — Quarto 標準の Typst と同じく `_brand.yml` からは自動で入りません。
   YAML に `logo: path/to/logo.png` と書けばページ背景に配置されます。
 
-### `js` パッケージのマクロ
+## `js` のマクロ（shortcode）
 
-テンプレートが `@preview/js` を `#import ...: *` で読み込むため、本文中で
-raw Typst として次のマクロが使えます。
+`js` の日本語組版マクロを Quarto の shortcode として書けます。拡張を入れると
+プロジェクト全体で使えるようになります。
 
-- `#ruby[科][か]` — ルビ
-- `#kintou(5em)[超電磁砲]` — 均等割り
-- `#noindent[...]` — 字下げなし
-- `#TeX`, `#LaTeX`
+| 書き方 | Typst 出力 |
+|:--|:--|
+| `{{< ruby 科 か >}}` | `#ruby[科][か]`（グループルビ） |
+| `{{< kintou 5em 超電磁砲 >}}` | `#kintou(5em)[超電磁砲]`（均等割り） |
+| `{{< tex >}}` / `{{< latex >}}` | `#TeX` / `#LaTeX`（`{{< TeX >}}`, `{{< LaTeX >}}` も可） |
+
+空白を含む引数は `{{< ruby "電磁 砲" "でんじ ほう" >}}` のように引用符で囲みます。
+`#`, `$`, `@`, `<` などの Typst の特殊文字もそのまま渡せます。
+
+字下げなしの段落は div で囲みます（`#noindent[...]` になります）。
+
+````markdown
+::: {.noindent}
+この段落は字下げされません。
+:::
+````
+
+Typst 以外のフォーマットでも壊れないよう、次のようにフォールバックします。
+
+| | HTML | LaTeX | その他 |
+|:--|:--|:--|:--|
+| `ruby` | `<ruby>科<rt>か</rt></ruby>` | 親文字のみ | 親文字のみ |
+| `kintou` | `text-align-last: justify` の `<span>` | 本文のみ | 本文のみ |
+| `tex` / `latex` | `TeX` / `LaTeX` | `\TeX` / `\LaTeX` | `TeX` / `LaTeX` |
+| `.noindent` | div のまま（CSS で指定可） | div のまま | div のまま |
+
+テンプレートは `@preview/js` を `#import ...: *` で読み込んでいるので、
+`#scatter[...]` のような他のマクロは raw Typst として直接書けます。
 
 ## 設計メモ
 
@@ -209,6 +233,7 @@ quarto call typst-gather
 
 - [tests/book/](tests/book/) — 部・付録・引用・章ごとの図番号を含む Quarto Book
 - [tests/brand/](tests/brand/) — `_brand.yml` のフォント・色の反映
+- [tests/macros.qmd](tests/macros.qmd) — ruby / kintou / noindent / TeX の shortcode
 - [tests/jsbook-single.qmd](tests/jsbook-single.qmd) — book プロジェクトでない `jsbook-typst`
 - [tests/book-mode.qmd](tests/book-mode.qmd) — `jsarticle-typst` の `book: true`
 - [template.qmd](template.qmd) — `jsarticle-typst` のデモ
