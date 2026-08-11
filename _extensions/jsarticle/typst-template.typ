@@ -37,6 +37,24 @@
 
 #let _blank(it) = _to-str(it).trim() == ""
 
+// Font families arrive either as a single name (`mainfont: Foo`) or as a Typst
+// array (`_brand.yml` typography, which Quarto hands over as a font list).
+#let _families(spec) = {
+  if spec == none { () } else if type(spec) == array { spec } else { (spec,) }
+}
+
+#let _first-family(spec) = _families(spec).at(0, default: none)
+
+// `js` tags the latin family with `covers` so that CJK glyphs fall through to
+// the CJK family. Same idea, but for a whole fallback chain.
+#let _font-list(latin, cjk, covers) = {
+  _families(latin).map(name => (name: name, covers: covers)) + _families(cjk)
+}
+
+// `js`'s own default for `non-cjk`, needed here because the font lists above
+// are built outside of `js`.
+#let JS-NON-CJK = regex("[\u{0000}-\u{2023}]")
+
 // Quarto hands us (name, affiliation, email) dictionaries; `js` wants either a
 // bare name or an array of lines that `boxtable` stacks under each other.
 #let _js-author(author) = {
@@ -58,18 +76,32 @@
   abstract: none,
   abstract-title: none,
   thanks: none,
+  heading-font: none,
+  heading-weight: none,
+  heading-style: none,
+  heading-color: none,
 ) = {
   let has-any = (
     title != none or subtitle != none or authors.len() > 0 or date != none or abstract != none
   )
   if not has-any { return }
 
+  // Title and subtitle follow the heading typography (brand.yml `headings`)
+  // when one is given; otherwise they stay in the body font, as jsarticle
+  // does. Applied as arguments rather than set rules so that the title block
+  // keeps its exact shape when no brand typography is in play.
+  let style = (:)
+  if heading-font != none { style.insert("font", heading-font) }
+  if heading-weight != none { style.insert("weight", heading-weight) }
+  if heading-style != none { style.insert("style", heading-style) }
+  if heading-color != none { style.insert("fill", heading-color) }
+
   place(top + center, scope: "parent", float: true, clearance: 2em)[
     #set align(center)
     #set par(first-line-indent: 0em, justify: false)
     #v(2em)
     #if title != none {
-      text(1.7em)[#title#if thanks != none {
+      text(1.7em, ..style)[#title#if thanks != none {
         footnote(thanks, numbering: "*")
         counter(footnote).update(n => n - 1)
       }]
@@ -77,7 +109,7 @@
     #if subtitle != none {
       linebreak()
       v(0.4em)
-      text(1.25em, subtitle)
+      text(1.25em, ..style, subtitle)
     }
     #if authors.len() > 0 {
       v(1.5em)
@@ -120,6 +152,10 @@
   sansfont-cjk: "Harano Aji Gothic",
   mathfont: none,
   codefont: none,
+  heading-family: none,
+  heading-weight: none,
+  heading-style: none,
+  heading-color: none,
   baselineskip: auto,
   textwidth: auto,
   lines-per-page: auto,
@@ -148,12 +184,25 @@
     author: js-authors.map(array2text).map(_to-str),
   ) if js-authors.len() > 0
 
+  // `js` takes one family per role and builds the covers-tagged font list
+  // itself, so it only ever sees the first family; the full fallback chains
+  // are re-applied inside its body below.
+  let covers = if non-cjk == auto { JS-NON-CJK } else { non-cjk }
+  let serif-list = _font-list(seriffont, seriffont-cjk, covers)
+  let sans-list = _font-list(sansfont, sansfont-cjk, covers)
+  let emph-list = _font-list(seriffont, sansfont-cjk, covers)
+  let heading-list = if heading-family == none {
+    sans-list
+  } else {
+    _font-list(heading-family, sansfont-cjk, covers)
+  }
+
   let js-args = (
     lang: lang,
-    seriffont: seriffont,
-    seriffont-cjk: seriffont-cjk,
-    sansfont: sansfont,
-    sansfont-cjk: sansfont-cjk,
+    seriffont: _first-family(seriffont),
+    seriffont-cjk: _first-family(seriffont-cjk),
+    sansfont: _first-family(sansfont),
+    sansfont-cjk: _first-family(sansfont-cjk),
     paper: paper,
     fontsize: fontsize,
     baselineskip: baselineskip,
@@ -177,6 +226,15 @@
       // `js` sets `supplement: none`; Quarto needs the 図/表/式 prefixes back.
       set ref(supplement: auto)
 
+      // Full font fallback chains (`js` only saw the first family of each).
+      set text(font: serif-list)
+      show strong: set text(font: sans-list)
+      show emph: set text(font: emph-list)
+      show heading: set text(font: heading-list)
+      show heading: set text(weight: heading-weight) if heading-weight != none
+      show heading: set text(style: heading-style) if heading-style != none
+      show heading: set text(fill: heading-color) if heading-color != none
+
       show math.equation: set text(font: mathfont) if mathfont != none
       show raw: set text(font: codefont) if codefont != none
 
@@ -198,6 +256,10 @@
         abstract: abstract,
         abstract-title: abstract-title,
         thanks: thanks,
+        heading-font: if heading-family == none { none } else { heading-list },
+        heading-weight: heading-weight,
+        heading-style: heading-style,
+        heading-color: heading-color,
       )
 
       if toc {

@@ -1,0 +1,16 @@
+color:
+  palette:
+    ink: "#1f2933"
+    accent: "#8c2f39"
+  foreground: ink
+  primary: accent
+
+typography:
+  base:
+    family: Source Serif Pro
+    size: 11pt
+  headings:
+    family: Source Sans Pro
+    color: accent
+  monospace:
+    family: Menlo

@@ -3,9 +3,9 @@ title: "Quarto で jsarticle 風の Typst 文書を書く"
 subtitle: "jsarticle-typst テンプレート"
 author:
   - name: 柳本 和春
-    affiliation: CEMFI
-    email: kazuharu.yanagimoto@cemfi.edu.es
-date: 2026-08-08
+    affiliation: 神戸大学
+    email: yanagimoto@econ.kobe-u.ac.jp
+date: last-modified
 abstract: |
   Haruhiko Okumura 氏の Typst パッケージ `js` を Quarto の Typst
   フォーマットに接続したテンプレートです. LaTeX の jsarticle
@@ -32,7 +32,7 @@ Quarto と Typst のように混植しても, ベースラインは崩れませ�
 
 ## 書体の指定
 
-`seriffont` などのオプションで書体を差し替えられます.
+`mainfont` などのオプションで書体を差し替えられます.
 **強調**は和文ゴシック体, *斜体*は欧文イタリックになります.
 
 # 数式
@@ -60,9 +60,9 @@ $$ {#eq-integral}
 library(ggplot2)
 
 ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
-  geom_point() +
-  labs(x = "Sepal length (cm)", y = "Sepal width (cm)", color = NULL) +
-  theme_minimal(base_size = 10)
+    geom_point() +
+    labs(x = "Sepal length (cm)", y = "Sepal width (cm)", color = NULL) +
+    theme_minimal(base_size = 10)
 ```
 
 @fig-scatter は R のチャンクから生成した図です.
@@ -90,5 +90,3 @@ ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
 Quarto の callout もそのまま使えます.
 :::
 
-`js` パッケージのマクロも利用できます. たとえばルビは
-`#ruby[科][か]` のように書けます.

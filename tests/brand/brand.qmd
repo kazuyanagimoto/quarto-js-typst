@@ -1,0 +1,25 @@
+---
+title: "_brand.yml のテスト"
+subtitle: "brand typography と色の反映"
+author:
+  - name: 柳本 和春
+    affiliation: 神戸大学
+abstract: |
+  `_brand.yml` の `typography` (base / headings / monospace) と
+  `color` が jsarticle-typst に反映されるかを確認します.
+format:
+  jsarticle-typst: default
+---
+
+# 見出しと本文
+
+本文は brand の `base.family` (欧文) と和文明朝の組み合わせで組まれます.
+見出しは `headings.family` と `headings.color` に従います.
+
+インラインコード `x <- 1` と, コードブロックは `monospace.family` になります.
+
+```r
+mean(c(1, 2, 3))
+```
+
+[リンク](https://quarto.org) は brand の `primary` 色になります.
