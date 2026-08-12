@@ -85,8 +85,8 @@ ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
 
 > 引用ブロックは左に二字分の字下げが入ります.
 
-`js` のマクロは shortcode で書けます. {{< ruby 科 か >}} のようにルビを振ったり,
-{{< kintou 5em 超電磁砲 >}} のように均等割りしたり, {{< tex >}} や
+`js` のマクロも使えます. [科]{.ruby argument="か"} のようにルビを振ったり,
+[超電磁砲]{.kintou argument="5em"} のように均等割りしたり, {{< tex >}} や
 {{< latex >}} のロゴを出せます.
 
 ::: {.noindent}

@@ -161,21 +161,22 @@ YAML に直接書いたキー（`mainfont`, `fontsize`, `codefont`, `linkcolor` 
 - `logo` — Quarto 標準の Typst と同じく `_brand.yml` からは自動で入りません。
   YAML に `logo: path/to/logo.png` と書けばページ背景に配置されます。
 
-## `js` のマクロ（shortcode）
+## `js` のマクロ
 
-`js` の日本語組版マクロを Quarto の shortcode として書けます。拡張を入れると
-プロジェクト全体で使えるようになります。
+`js` の日本語組版マクロは、クラスがマクロ名・`argument` が引数という
+[typst-function](https://github.com/christopherkenny/typst-function) 流の
+span / div で書けます。ロゴだけは本文を取らないので shortcode です。
 
 | 書き方 | Typst 出力 |
 |:--|:--|
-| `{{< ruby 科 か >}}` | `#ruby[科][か]`（グループルビ） |
-| `{{< kintou 5em 超電磁砲 >}}` | `#kintou(5em)[超電磁砲]`（均等割り） |
+| `[科]{.ruby argument="か"}` | `#ruby[科][か]`（グループルビ） |
+| `[超電磁砲]{.kintou argument="5em"}` | `#kintou(5em)[超電磁砲]`（均等割り） |
+| `::: {.noindent}` … `:::` | `#noindent[…]`（段落の字下げなし） |
 | `{{< tex >}}` / `{{< latex >}}` | `#TeX` / `#LaTeX`（`{{< TeX >}}`, `{{< LaTeX >}}` も可） |
 
-空白を含む引数は `{{< ruby "電磁 砲" "でんじ ほう" >}}` のように引用符で囲みます。
-`#`, `$`, `@`, `<` などの Typst の特殊文字もそのまま渡せます。
-
-字下げなしの段落は div で囲みます（`#noindent[...]` になります）。
+`argument` は `arguments` と書いても同じです。`#`, `$`, `@`, `<` などの Typst の
+特殊文字はそのまま渡せます（`[C#]{.ruby argument="シャープ"}`）。`.kintou` の
+`argument` は Typst の長さ（`5em`, `3cm` など）として解釈されます。
 
 ````markdown
 ::: {.noindent}
@@ -187,10 +188,21 @@ Typst 以外のフォーマットでも壊れないよう、次のようにフ�
 
 | | HTML | LaTeX | その他 |
 |:--|:--|:--|:--|
-| `ruby` | `<ruby>科<rt>か</rt></ruby>` | 親文字のみ | 親文字のみ |
-| `kintou` | `text-align-last: justify` の `<span>` | 本文のみ | 本文のみ |
-| `tex` / `latex` | `TeX` / `LaTeX` | `\TeX` / `\LaTeX` | `TeX` / `LaTeX` |
+| `.ruby` | `<ruby>科<rt>か</rt></ruby>` | 親文字のみ | 親文字のみ |
+| `.kintou` | `text-align-last: justify` の `<span>` | 本文のみ | 本文のみ |
 | `.noindent` | div のまま（CSS で指定可） | div のまま | div のまま |
+| `tex` / `latex` | `TeX` / `LaTeX` | `\TeX` / `\LaTeX` | `TeX` / `LaTeX` |
+
+span / div の変換はフィルタなので、同じ原稿を HTML などでも出す場合は、その
+フォーマットでフィルタを有効にしてください（shortcode は指定不要です）。
+
+````yaml
+format:
+  html:
+    filters:
+      - jsarticle   # jsbook-typst を使っているなら jsbook
+  jsarticle-typst: default
+````
 
 テンプレートは `@preview/js` を `#import ...: *` で読み込んでいるので、
 `#scatter[...]` のような他のマクロは raw Typst として直接書けます。
