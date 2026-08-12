@@ -1,22 +1,24 @@
 # quarto-js-typst
 
-LaTeX の `jsarticle` / `jsbook` 相当の版面を Typst で再現する Quarto フォーマットです。
-組版の中核には奥村晴彦氏の Typst パッケージ
-[`js`](https://github.com/okumuralab/typst-js) を使い、Quarto 側の
-メタデータ・相互参照・引用・コードセルをそこに接続しています。
+English | [日本語](README_ja.md)
 
-| フォーマット | 用途 |
+Quarto formats that reproduce the page layout of LaTeX's `jsarticle` / `jsbook`
+in Typst. The typesetting is done by Haruhiko Okumura's Typst package
+[`js`](https://github.com/okumuralab/typst-js); this extension wires Quarto's
+metadata, cross-references, citations and code cells into it.
+
+| Format | Use |
 |:--|:--|
-| `jsarticle-typst` | 単一の記事・レポート |
-| `jsbook-typst` | Quarto Book（Quarto 1.9 以降の単一ファイル Typst book）および単一ファイルの書籍風文書 |
+| `jsarticle-typst` | A single article or report |
+| `jsbook-typst` | Quarto Book (the single-file Typst book of Quarto 1.9+) and single-file book-like documents |
 
-## インストール
+## Installation
 
 ```bash
 quarto add kazuyanagimoto/quarto-js-typst
 ```
 
-スターターの `.qmd` ごと取得する場合:
+To get the starter `.qmd` as well:
 
 ```bash
 quarto use template kazuyanagimoto/quarto-js-typst
@@ -24,7 +26,7 @@ quarto use template kazuyanagimoto/quarto-js-typst
 
 ## jsarticle
 
-````yaml
+```yaml
 ---
 title: "タイトル"
 author:
@@ -36,13 +38,13 @@ abstract: |
 format:
   jsarticle-typst: default
 ---
-````
+```
 
 ## jsbook
 
-Quarto Book プロジェクトの `_quarto.yml` でフォーマットに指定します。
+Set the format in `_quarto.yml` of a Quarto Book project.
 
-````yaml
+```yaml
 project:
   type: book
 
@@ -59,224 +61,239 @@ book:
     - notation.qmd
 
 format: jsbook-typst
-````
+```
 
-対応している jsbook 的な構造は次のとおりです。
+The jsbook structures that are supported:
 
-- **扉** — タイトル・副題・著者・日付を独立ページに組みます。
-- **前付 / 本文** — 扉と目次、および番号のない章（`index.qmd` のまえがきなど）は
-  小文字ローマ数字、最初の番号付き章（または最初の部）から算用数字に戻して 1 から
-  数え直します。LaTeX の `\frontmatter` / `\mainmatter` に相当します。
-  `frontmatter: false` にすると通しの算用数字になります。
-- **部** — `book.chapters` の `part:` が「第 I 部」の扉ページになり、目次にも
-  太字で入ります。
-- **付録** — `book.appendices` から `\appendix` 相当に切り替わり、章見出しが
-  「付録 A」、図表・数式・定理番号が `A.1` 形式になります。
-  Quarto が挿入する "Appendices" の仕切り見出しは jsbook には無いので落とします。
-- **柱（ヘッダ）** — 偶数ページに「第 1 章 章題」、奇数ページに「1.1 節題」。
-  章扉・部扉には付きません。付録では「付録 A」と出ます。
-- **章ごとの番号** — 図 1.1、式 (1.1)、定理 1.1。カウンタのリセットは Quarto 本体が
-  行います。
+- **Title page** — title, subtitle, authors and date on a page of their own.
+- **Front matter / main matter** — the title page, the table of contents and
+  unnumbered chapters (a preface in `index.qmd`, say) are numbered in lowercase
+  roman; the first numbered chapter (or the first part) restarts the count at
+  arabic 1. This is LaTeX's `\frontmatter` / `\mainmatter`. Set
+  `frontmatter: false` for arabic numbering throughout.
+- **Parts** — a `part:` in `book.chapters` becomes a "第 I 部" part page and is
+  listed in bold in the table of contents.
+- **Appendices** — `book.appendices` switches to the equivalent of `\appendix`:
+  chapter headings read "付録 A" and floats, equations and theorems are numbered
+  `A.1`. Quarto's synthetic "Appendices" divider heading has no counterpart in
+  jsbook, so it is dropped.
+- **Running heads** — "第 1 章 章題" on verso pages, "1.1 節題" on recto pages,
+  nothing on chapter and part openers, "付録 A" in the appendix.
+- **Chapter-scoped numbers** — 図 1.1, 式 (1.1), 定理 1.1. Quarto itself resets
+  the counters.
 
-単一の `.qmd` に `format: jsbook-typst` を指定した場合も、扉・目次・章起こしは
-同じように動きます（最初のレベル 1 見出しから本文扱いになります）。
+A single `.qmd` with `format: jsbook-typst` works the same way — title page,
+table of contents and chapter openers included; the main matter starts at the
+first level-1 heading.
 
-## オプション
+## Options
 
-`js` パッケージの引数はすべて YAML から指定できます。既定値は `js` に準拠します。
-両フォーマット共通です。
+Every argument of the `js` package can be set from YAML, with the defaults of
+`js`. These apply to both formats.
 
-| キー | 既定値 | 説明 |
+| Key | Default | Description |
 |:--|:--|:--|
-| `papersize` | `a4` | `a3`〜`a6`, `b4`〜`b6` |
-| `fontsize` | `10pt` | 基準文字サイズ |
-| `mainfont` | `New Computer Modern` | 欧文明朝（別名 `seriffont`） |
-| `CJKmainfont` | `Harano Aji Mincho` | 和文明朝（別名 `seriffont-cjk`） |
-| `sansfont` | `Source Sans Pro` | 欧文ゴシック（見出し・強調） |
-| `CJKsansfont` | `Harano Aji Gothic` | 和文ゴシック（別名 `sansfont-cjk`） |
-| `mathfont` | なし | 数式のフォント |
-| `codefont` | なし | コードのフォント（別名 `monofont`） |
-| `baselineskip` | `auto` | 行送り。`auto` は `1.73 × fontsize` |
-| `textwidth` | `auto` | 版面幅。段間 2em を含む |
-| `lines-per-page` | `auto` | 1 ページの行数 |
-| `columns` | `1` | 段組の段数 |
-| `cjkheight` | `0.88` | 和文の高さ（em 単位）。ベースライン位置の調整用 |
-| `table-style` | `booktabs` | 表の罫線。`booktabs` / `grid` / `plain` |
+| `papersize` | `a4` | `a3`–`a6`, `b4`–`b6` |
+| `fontsize` | `10pt` | Base font size |
+| `mainfont` | `New Computer Modern` | Latin serif (alias `seriffont`) |
+| `CJKmainfont` | `Harano Aji Mincho` | CJK mincho (alias `seriffont-cjk`) |
+| `sansfont` | `Source Sans Pro` | Latin sans (headings and strong) |
+| `CJKsansfont` | `Harano Aji Gothic` | CJK gothic (alias `sansfont-cjk`) |
+| `mathfont` | none | Font for math |
+| `codefont` | none | Font for code (alias `monofont`) |
+| `baselineskip` | `auto` | Leading; `auto` is `1.73 × fontsize` |
+| `textwidth` | `auto` | Text block width, including the 2em column gutter |
+| `lines-per-page` | `auto` | Lines per page |
+| `columns` | `1` | Number of columns |
+| `cjkheight` | `0.88` | Height of CJK glyphs in em, used to place the baseline |
+| `table-style` | `booktabs` | Table rules: `booktabs` / `grid` / `plain` |
 
-フォントのキーは Quarto の Typst フォーマット標準に合わせてあります。欧文は
-`mainfont` / `sansfont`、コードは `codefont`（Quarto の Typst 用キー。`monofont`
-と書いても同じ）、数式は `mathfont` です。`js` パッケージ側の名前
-（`seriffont`, `seriffont-cjk`, `sansfont-cjk`）も別名として受け付けます。
+The font keys follow Quarto's Typst formats: `mainfont` / `sansfont` for latin,
+`codefont` for code (Quarto's Typst-specific key; `monofont` works too) and
+`mathfont` for math. The names used by `js` itself (`seriffont`,
+`seriffont-cjk`, `sansfont-cjk`) are accepted as aliases.
 
-和文と欧文は Typst の `covers` で切り分けているので、欧文フォントに和文が
-混ざることはありません。`_brand.yml` のようにフォントを複数指定した場合は、
-欧文側のフォールバック列として順に使われます。
+Latin and CJK are separated with Typst's `covers`, so a latin font is never
+asked to render CJK. When several families are given (as `_brand.yml` does),
+they are used as the latin fallback chain in order.
 
-### 表の罫線（`table-style`）
+### Table rules (`table-style`)
 
-| 値 | 見た目 |
+| Value | Look |
 |:--|:--|
-| `booktabs`（既定） | 縦罫なし。表の上下に太罫（0.08em）、見出し下に細罫（0.05em）。列間は jsarticle の `\tabcolsep` と同じ 6pt |
-| `grid` | `js` の既定。全セルに 0.04em（= jsarticle の `\arrayrulewidth` 0.4pt 相当）の罫線 |
-| `plain` | Quarto 標準の Typst と同じ（`inset: 6pt, stroke: none`）。見出し下の罫線だけ |
+| `booktabs` (default) | No vertical rules. 0.08em above and below the table, 0.05em under the header. The column inset is 6pt, jsarticle's `\tabcolsep` |
+| `grid` | The `js` default: 0.04em on every cell (jsarticle's `\arrayrulewidth`, 0.4pt) |
+| `plain` | Same as the stock Quarto Typst format (`inset: 6pt, stroke: none`): the header rule only |
 
-`booktabs` は表を上下の罫線付きブロックで包むだけなので、改ページをまたぐ表でも
-各断片の上下に罫が入ります。`#table(stroke: ...)` のように罫線を明示した表
-（生の Typst で書いた表など）には手を触れません。
+`booktabs` only wraps the table in a block with rules above and below, so a
+table that breaks across pages gets them on both sides of the break. Tables with
+an explicit stroke (a hand-written Typst table, say) are left alone.
 
-`jsarticle-typst` のみ:
+`jsarticle-typst` only:
 
-| キー | 既定値 | 説明 |
+| Key | Default | Description |
 |:--|:--|:--|
-| `book` | `false` | `true` で jsbook 風レイアウト（簡易版。書籍は `jsbook-typst` 推奨） |
+| `book` | `false` | `true` for a jsbook-like layout (a simplified one — prefer `jsbook-typst` for books) |
 
-`jsbook-typst` のみ:
+`jsbook-typst` only:
 
-| キー | 既定値 | 説明 |
+| Key | Default | Description |
 |:--|:--|:--|
-| `frontmatter` | `true` | 前付をローマ数字にし、本文で 1 から数え直す |
-| `chapter-prefix` / `chapter-suffix` | `第` / `章` | 章扉と柱の章表記 |
-| `appendix-prefix` / `appendix-suffix` | `付録` / （空） | 付録の章表記 |
-| `part-prefix` / `part-suffix` | `第` / `部` | 部扉と目次の部表記 |
+| `frontmatter` | `true` | Roman numerals in the front matter, restarting at 1 in the main matter |
+| `chapter-prefix` / `chapter-suffix` | `第` / `章` | Chapter label on openers and running heads |
+| `appendix-prefix` / `appendix-suffix` | `付録` / (empty) | Appendix chapter label |
+| `part-prefix` / `part-suffix` | `第` / `部` | Part label on part pages and in the table of contents |
 
-Quarto 標準のオプション（`toc`, `number-sections`, `section-numbering`,
+Quarto's own options (`toc`, `number-sections`, `section-numbering`,
 `page-numbering`, `linkcolor`, `citecolor`, `filecolor`, `keywords`,
-`bibliography`, `csl` など）もそのまま使えます。
+`bibliography`, `csl` and so on) work as usual.
 
-フォーマット既定として `lang: ja`、`number-sections: true`、
-`section-numbering: "1.1.1"` を設定しています。jsarticle / jsbook と同じく節に
-番号が付き、図表・数式の参照は「図 1」「表 1」「式 1」になります。
+The formats default to `lang: ja`, `number-sections: true` and
+`section-numbering: "1.1.1"`, so sections are numbered as in jsarticle / jsbook
+and references read 図 1, 表 1, 式 1.
 
-## `_brand.yml` 対応
+## `_brand.yml` support
 
-プロジェクトに `_brand.yml` があれば、Quarto 標準の Typst フォーマットと同じ
-範囲で反映されます。
+A `_brand.yml` in the project is honoured to the same extent as in the stock
+Quarto Typst format.
 
-| brand の項目 | 反映先 |
+| brand entry | Applied to |
 |:--|:--|
-| `typography.base.family` / `.size` | 本文の欧文フォント・基準文字サイズ（和文は `CJKmainfont`） |
-| `typography.headings.family` / `.weight` / `.style` / `.color` | 見出しとタイトル（和文は `CJKsansfont` にフォールバック） |
-| `typography.monospace.family` | コードのフォント |
-| `typography.monospace-inline` の太さ・大きさ・色・地色 | インラインコード |
-| `color.background` / `color.foreground` | ページの地色・文字色（柱の罫線も文字色に追随します） |
-| `color.primary` | リンク色 |
+| `typography.base.family` / `.size` | Latin body font and base size (CJK stays on `CJKmainfont`) |
+| `typography.headings.family` / `.weight` / `.style` / `.color` | Headings and the title (CJK falls back to `CJKsansfont`) |
+| `typography.monospace.family` | Font for code |
+| `typography.monospace-inline` weight / size / colour / background | Inline code |
+| `color.background` / `color.foreground` | Page and text colour (the running-head rule follows the text colour) |
+| `color.primary` | Link colour |
 
-YAML に直接書いたキー（`mainfont`, `fontsize`, `codefont`, `linkcolor` など）は
-`_brand.yml` より優先されます。
+Keys written directly in YAML (`mainfont`, `fontsize`, `codefont`, `linkcolor`,
+…) take precedence over `_brand.yml`.
 
-版面を `js` に任せている都合で、次の項目は反映されません。
+Because the page layout is left to `js`, these are not applied:
 
-- `typography.base.line-height` / `typography.headings.line-height` —
-  行送りは `js` のグリッドが決めます。変えたい場合は `baselineskip` を使ってください。
-- `typography.base.weight` — 本文の太さは `js` の `450` のままです。
-- `typography.monospace-block.background-color` — コードブロックの地色は
-  `js` の `luma(240)` のままです。
-- `logo` — Quarto 標準の Typst と同じく `_brand.yml` からは自動で入りません。
-  YAML に `logo: path/to/logo.png` と書けばページ背景に配置されます。
+- `typography.base.line-height` / `typography.headings.line-height` — the
+  leading is set by the `js` grid. Use `baselineskip` instead.
+- `typography.base.weight` — body weight stays at the `450` of `js`.
+- `typography.monospace-block.background-color` — the code block background
+  stays at the `luma(240)` of `js`.
+- `logo` — as in the stock Quarto Typst format, it is not picked up from
+  `_brand.yml`. Write `logo: path/to/logo.png` in YAML to place one in the page
+  background.
 
-## `js` のマクロ
+## The `js` macros
 
-`js` の日本語組版マクロは、クラスがマクロ名・`argument` が引数という
-[typst-function](https://github.com/christopherkenny/typst-function) 流の
-span / div で書けます。ロゴだけは本文を取らないので shortcode です。
+The Japanese typesetting macros of `js` are written as spans and divs in the
+style of [typst-function](https://github.com/christopherkenny/typst-function):
+the class names the macro and `argument` carries the rest. The logos take no
+body, so they are shortcodes.
 
-| 書き方 | Typst 出力 |
+| Markup | Typst output |
 |:--|:--|
-| `[科]{.ruby argument="か"}` | `#ruby[科][か]`（グループルビ） |
-| `[超電磁砲]{.kintou argument="5em"}` | `#kintou(5em)[超電磁砲]`（均等割り） |
-| `::: {.noindent}` … `:::` | `#noindent[…]`（段落の字下げなし） |
-| `{{< tex >}}` / `{{< latex >}}` | `#TeX` / `#LaTeX`（`{{< TeX >}}`, `{{< LaTeX >}}` も可） |
+| `[科]{.ruby argument="か"}` | `#ruby[科][か]` (group ruby) |
+| `[超電磁砲]{.kintou argument="5em"}` | `#kintou(5em)[超電磁砲]` (evenly spread text) |
+| `::: {.noindent}` … `:::` | `#noindent[…]` (no first-line indent) |
+| `{{< tex >}}` / `{{< latex >}}` | `#TeX` / `#LaTeX` (`{{< TeX >}}`, `{{< LaTeX >}}` work too) |
 
-`argument` は `arguments` と書いても同じです。`#`, `$`, `@`, `<` などの Typst の
-特殊文字はそのまま渡せます（`[C#]{.ruby argument="シャープ"}`）。`.kintou` の
-`argument` は Typst の長さ（`5em`, `3cm` など）として解釈されます。
+`argument` can also be spelled `arguments`. Typst's special characters (`#`,
+`$`, `@`, `<`, …) can be passed as they are (`[C#]{.ruby argument="シャープ"}`).
+The `argument` of `.kintou` is read as a Typst length (`5em`, `3cm`, …).
 
-````markdown
+```markdown
 ::: {.noindent}
 この段落は字下げされません。
 :::
-````
+```
 
-Typst 以外のフォーマットでも壊れないよう、次のようにフォールバックします。
+They fall back so that the same source still renders in other formats:
 
-| | HTML | LaTeX | その他 |
+| | HTML | LaTeX | Other |
 |:--|:--|:--|:--|
-| `.ruby` | `<ruby>科<rt>か</rt></ruby>` | 親文字のみ | 親文字のみ |
-| `.kintou` | `text-align-last: justify` の `<span>` | 本文のみ | 本文のみ |
-| `.noindent` | div のまま（CSS で指定可） | div のまま | div のまま |
+| `.ruby` | `<ruby>科<rt>か</rt></ruby>` | base text only | base text only |
+| `.kintou` | `<span>` with `text-align-last: justify` | body only | body only |
+| `.noindent` | the div as-is (style it with CSS) | the div as-is | the div as-is |
 | `tex` / `latex` | `TeX` / `LaTeX` | `\TeX` / `\LaTeX` | `TeX` / `LaTeX` |
 
-span / div の変換はフィルタなので、同じ原稿を HTML などでも出す場合は、その
-フォーマットでフィルタを有効にしてください（shortcode は指定不要です）。
+Spans and divs are converted by a filter, and Quarto only applies a filter to
+the format that declares it. So enable it in the other formats you render the
+same source to (the shortcodes need no such setup):
 
-````yaml
+```yaml
 format:
   html:
     filters:
-      - jsarticle   # jsbook-typst を使っているなら jsbook
+      - jsarticle # jsbook if you use jsbook-typst
   jsarticle-typst: default
-````
+```
 
-テンプレートは `@preview/js` を `#import ...: *` で読み込んでいるので、
-`#scatter[...]` のような他のマクロは raw Typst として直接書けます。
+The templates import `@preview/js` with `#import ...: *`, so other macros such
+as `#scatter[...]` can be written as raw Typst.
 
-## 設計メモ
+## Design notes
 
-Quarto の Typst パイプラインとの接続で、`js` の既定から変更している点です。
+What is changed from the `js` defaults to fit Quarto's Typst pipeline:
 
-1. **`set ref(supplement: auto)` に戻す** — `js` は `supplement: none` を設定
-   しますが、これを残すと相互参照から「図」「表」の接頭辞が消えます。
-2. **タイトルブロック / 扉を自前で持つ** — `js` の `maketitle` は subtitle や
-   `abstract-title` を受け取らないため、同じ見た目のものをテンプレート側に置いています。
-3. **`page.typ` パーシャルを無効化** — 版面は `js` が
-   `papersize` / `fontsize` / `baselineskip` から決めるので、Quarto 既定の
-   `us-letter` / `1.25in` が干渉しないようにしています。
-4. **jsbook はレベル 1 見出しと柱を自前で描く** — `js` の `book: true` は章見出しを
-   「第 N 章」に固定しており、部・付録を表現できないためです。レベル 2 以降の
-   見出し・行送り・字送り・和欧混植は `js` のものをそのまま使っています。
-5. **表は既定を booktabs 風にした** — Typst の `table` は既定で全セルに罫線
-   （`1pt + black`）を引く仕様で、`js` はそれを `0.04em`（jsarticle の
-   `\arrayrulewidth` = 0.4pt 相当）に細くしているだけです。LaTeX の `tabular` は
-   `\hline` や `|` を書かない限り罫線を引かないので、全格子は jsarticle 由来では
-   ありません。`js` の見た目に戻すには `table-style: grid` を指定してください。
+1. **`set ref(supplement: auto)` is restored** — `js` sets `supplement: none`,
+   which would strip the 図 / 表 prefix from every cross-reference.
+2. **The title block and title page are our own** — the `maketitle` of `js`
+   takes neither a subtitle nor an `abstract-title`, so the templates carry a
+   look-alike.
+3. **The `page.typ` partial is disabled** — the page geometry is derived by `js`
+   from `papersize` / `fontsize` / `baselineskip`, and Quarto's `us-letter` /
+   `1.25in` defaults must not interfere.
+4. **jsbook draws its own level-1 headings and running heads** — `book: true` in
+   `js` hard-codes "第 N 章" chapter headings and cannot express parts or
+   appendices. Level-2 and deeper headings, the leading, the letter spacing and
+   the latin/CJK mixing are all still those of `js`.
+5. **Tables default to a booktabs look** — Typst's `table` draws a full grid by
+   default (`1pt + black`) and `js` only thins it to `0.04em` (jsarticle's
+   `\arrayrulewidth`, 0.4pt). LaTeX's `tabular` draws nothing unless `\hline` or
+   `|` asks for it, so the boxed look does not come from jsarticle. Use
+   `table-style: grid` for the `js` look.
 
-`js` パッケージ本体は同梱しておらず、`@preview/js:0.1.3` として
-[Typst Universe](https://typst.app/universe/package/js) から取得します。初回の
-レンダリングだけネットワークが必要で、以降は Typst のパッケージキャッシュが
-使われます。オフライン環境で使う場合は、拡張のディレクトリで
+The `js` package itself is not vendored: it is fetched from
+[Typst Universe](https://typst.app/universe/package/js) as `@preview/js:0.1.3`.
+Only the first render needs the network; after that Typst's package cache is
+used. For offline use, run this in the extension directory
 
 ```bash
-cd _extensions/kazuyanagimoto/jsarticle   # jsbook も同様
+cd _extensions/kazuyanagimoto/jsarticle   # likewise for jsbook
 quarto call typst-gather
 ```
 
-を実行すると、その拡張の `typst/packages/` にパッケージを取り込めます。
+to vendor the package into that extension's `typst/packages/`.
 
-## 既知の制限
+## Known limitations
 
-- 章起こしで生じる空白ページにも柱が入ります（LaTeX の `\cleardoublepage` は
-  `empty` ページスタイルにします）。Typst 側にページが空かを判定する手段が無いためです。
-- 目次の付録は「A 記号一覧」と出ます（「付録 A 記号一覧」ではありません）。
-- `js` は Typst 0.13 以降が前提です。Quarto 1.10 同梱の Typst 0.15 で動作を確認しています。
+- The blank page a chapter opener creates still carries a running head (LaTeX's
+  `\cleardoublepage` switches to the `empty` page style), because Typst has no
+  way to tell whether a page is empty.
+- Appendices read "A 記号一覧" in the table of contents, not "付録 A 記号一覧".
+- `js` requires Typst 0.13 or later. Verified with the Typst 0.15 bundled with
+  Quarto 1.10.
 
-## テスト
+## Tests
 
-- [tests/book/](tests/book/) — 部・付録・引用・章ごとの図番号を含む Quarto Book
-- [tests/brand/](tests/brand/) — `_brand.yml` のフォント・色の反映
-- [tests/macros.qmd](tests/macros.qmd) — ruby / kintou / noindent / TeX の span と shortcode
-- [tests/tables.qmd](tests/tables.qmd) — `table-style` の 3 種類（`-M table-style:grid` などで切り替え）
-- [tests/jsbook-single.qmd](tests/jsbook-single.qmd) — book プロジェクトでない `jsbook-typst`
-- [tests/book-mode.qmd](tests/book-mode.qmd) — `jsarticle-typst` の `book: true`
-- [template.qmd](template.qmd) — `jsarticle-typst` のデモ
+- [tests/book/](tests/book/) — a Quarto Book with parts, appendices, citations
+  and chapter-scoped float numbers
+- [tests/brand/](tests/brand/) — fonts and colours from `_brand.yml`
+- [tests/macros.qmd](tests/macros.qmd) — the ruby / kintou / noindent / TeX
+  spans and shortcodes
+- [tests/tables.qmd](tests/tables.qmd) — the three `table-style` values (switch
+  with `-M table-style:grid` and so on)
+- [tests/jsbook-single.qmd](tests/jsbook-single.qmd) — `jsbook-typst` outside a
+  book project
+- [tests/book-mode.qmd](tests/book-mode.qmd) — `book: true` in `jsarticle-typst`
+- [template.qmd](template.qmd) — the `jsarticle-typst` demo
 
-## ロードマップ
+## Roadmap
 
-- [x] `jsarticle-typst`（記事）
-- [x] `jsbook-typst`（Quarto Book。部・付録・前付/本文の切り替え・柱）
-- [ ] 図目次・表目次（`lof` / `lot`）
-- [ ] 索引（`makeidx` 相当）
-- [ ] `js` に依存しない独自実装への移行の検討
+- [x] `jsarticle-typst` (articles)
+- [x] `jsbook-typst` (Quarto Book: parts, appendices, front/main matter,
+      running heads)
+- [ ] List of figures and tables (`lof` / `lot`)
+- [ ] Index (the equivalent of `makeidx`)
 
-## ライセンス
+## License
 
-MIT License. レンダリング時に取得する `js` パッケージは MIT-0 (Haruhiko Okumura) です。
+MIT License ([LICENSE](LICENSE)). The `js` package fetched at render time is
+MIT-0 (Haruhiko Okumura).
