@@ -31,8 +31,8 @@ quarto use template kazuyanagimoto/quarto-js-typst
 title: "タイトル"
 author:
   - name: 柳本 和春
-    affiliation: CEMFI
-    email: kazuharu.yanagimoto@cemfi.edu.es
+    affiliation: 神戸大学
+    email: yanagimoto@econ.kobe-u.ac.jp
 abstract: |
   概要をここに書きます。
 format:
