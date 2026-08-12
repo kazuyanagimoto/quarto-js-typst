@@ -1,7 +1,11 @@
+# `quarto use template` がユーザのディレクトリに持っていかないファイル。
+# 配るのは template.qmd と references.bib（と _extensions/）だけ。
 .git/
 .github/
 .quarto/
 docs/
 img/
+tests/
 README.md
 _quarto.yml
+template.pdf
