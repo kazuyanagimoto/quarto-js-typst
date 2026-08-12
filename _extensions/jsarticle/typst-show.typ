@@ -106,6 +106,9 @@ $endif$
 $if(book)$
   book: $book$,
 $endif$
+$if(table-style)$
+  table-style: "$table-style$",
+$endif$
 $if(section-numbering)$
   sectionnumbering: "$section-numbering$",
 $endif$

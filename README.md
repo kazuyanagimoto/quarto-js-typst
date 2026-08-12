@@ -101,6 +101,7 @@ format: jsbook-typst
 | `lines-per-page` | `auto` | 1 ページの行数 |
 | `columns` | `1` | 段組の段数 |
 | `cjkheight` | `0.88` | 和文の高さ（em 単位）。ベースライン位置の調整用 |
+| `table-style` | `booktabs` | 表の罫線。`booktabs` / `grid` / `plain` |
 
 フォントのキーは Quarto の Typst フォーマット標準に合わせてあります。欧文は
 `mainfont` / `sansfont`、コードは `codefont`（Quarto の Typst 用キー。`monofont`
@@ -110,6 +111,18 @@ format: jsbook-typst
 和文と欧文は Typst の `covers` で切り分けているので、欧文フォントに和文が
 混ざることはありません。`_brand.yml` のようにフォントを複数指定した場合は、
 欧文側のフォールバック列として順に使われます。
+
+### 表の罫線（`table-style`）
+
+| 値 | 見た目 |
+|:--|:--|
+| `booktabs`（既定） | 縦罫なし。表の上下に太罫（0.08em）、見出し下に細罫（0.05em）。列間は jsarticle の `\tabcolsep` と同じ 6pt |
+| `grid` | `js` の既定。全セルに 0.04em（= jsarticle の `\arrayrulewidth` 0.4pt 相当）の罫線 |
+| `plain` | Quarto 標準の Typst と同じ（`inset: 6pt, stroke: none`）。見出し下の罫線だけ |
+
+`booktabs` は表を上下の罫線付きブロックで包むだけなので、改ページをまたぐ表でも
+各断片の上下に罫が入ります。`#table(stroke: ...)` のように罫線を明示した表
+（生の Typst で書いた表など）には手を触れません。
 
 `jsarticle-typst` のみ:
 
@@ -221,6 +234,11 @@ Quarto の Typst パイプラインとの接続で、`js` の既定から変更�
 4. **jsbook はレベル 1 見出しと柱を自前で描く** — `js` の `book: true` は章見出しを
    「第 N 章」に固定しており、部・付録を表現できないためです。レベル 2 以降の
    見出し・行送り・字送り・和欧混植は `js` のものをそのまま使っています。
+5. **表は既定を booktabs 風にした** — Typst の `table` は既定で全セルに罫線
+   （`1pt + black`）を引く仕様で、`js` はそれを `0.04em`（jsarticle の
+   `\arrayrulewidth` = 0.4pt 相当）に細くしているだけです。LaTeX の `tabular` は
+   `\hline` や `|` を書かない限り罫線を引かないので、全格子は jsarticle 由来では
+   ありません。`js` の見た目に戻すには `table-style: grid` を指定してください。
 
 `js` パッケージ本体は同梱しておらず、`@preview/js:0.1.3` として
 [Typst Universe](https://typst.app/universe/package/js) から取得します。初回の
@@ -245,7 +263,8 @@ quarto call typst-gather
 
 - [tests/book/](tests/book/) — 部・付録・引用・章ごとの図番号を含む Quarto Book
 - [tests/brand/](tests/brand/) — `_brand.yml` のフォント・色の反映
-- [tests/macros.qmd](tests/macros.qmd) — ruby / kintou / noindent / TeX の shortcode
+- [tests/macros.qmd](tests/macros.qmd) — ruby / kintou / noindent / TeX の span と shortcode
+- [tests/tables.qmd](tests/tables.qmd) — `table-style` の 3 種類（`-M table-style:grid` などで切り替え）
 - [tests/jsbook-single.qmd](tests/jsbook-single.qmd) — book プロジェクトでない `jsbook-typst`
 - [tests/book-mode.qmd](tests/book-mode.qmd) — `jsarticle-typst` の `book: true`
 - [template.qmd](template.qmd) — `jsarticle-typst` のデモ

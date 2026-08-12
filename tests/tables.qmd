@@ -1,0 +1,34 @@
+---
+title: "表のテスト"
+format:
+  jsarticle-typst: default
+---
+
+既定は `table-style: booktabs` です。`grid`（`js` の既定）と `plain`
+（Quarto 標準）は `-M table-style:grid` のように切り替えて確認します。
+
+| 品種 | 標本数 | 平均がく長 |
+|:-----|-------:|-----------:|
+| setosa | 50 | 5.01 |
+| versicolor | 50 | 5.94 |
+| virginica | 50 | 6.59 |
+
+: キャプション付きの表 {#tbl-summary}
+
+@tbl-summary はキャプション付きです。次はキャプションのない表です。
+
+| 記号 | 意味 |
+|:--|:--|
+| $\alpha$ | 切片 |
+| $\beta$ | 傾き |
+
+改ページをまたぐ長い表も、各断片の上下に罫が入ります。
+
+```{r}
+#| echo: false
+knitr::kable(data.frame(
+    行 = sprintf("行 %02d", 1:40),
+    値 = round(seq(1, 40) * 1.5, 2),
+    区分 = rep(c("A", "B"), 20)
+))
+```
