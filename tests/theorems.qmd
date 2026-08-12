@@ -1,0 +1,45 @@
+---
+title: "定理環境のテスト"
+format:
+  jsarticle-typst: default
+---
+
+Quarto の crossref 定理環境。statement の和文が本文と同じ明朝の立体で組まれ、
+ラベルだけが太字ゴシックになることを確認する。`-M keep-typ:true` と
+`format: jsbook-typst` でも同じ結果になること。
+
+::: {#thm-data-ink .theorem name="データインク比の原則"}
+図においては次のデータインク比を最大化しなければならない。欧文の statement は
+イタリックのまま: Data-ink ratio should be maximized. **強調**は和文ゴシック、
+statement 内の *傍点的な強調* は明朝のまま。
+:::
+
+@thm-data-ink は地の文からの参照。地の文はこの通り明朝。
+
+::: {#lem-a .lemma}
+補題の本文。
+:::
+
+::: {#cor-a .corollary}
+系の本文。
+:::
+
+::: {#def-a .definition name="定義の名前"}
+定義の本文。
+:::
+
+::: {#exm-a .example}
+例の本文。
+:::
+
+::: {#exr-a .exercise}
+演習の本文。
+:::
+
+::: {.proof}
+証明の本文。ラベルだけが `emph` になる。
+:::
+
+::: {.remark}
+注意の本文。
+:::

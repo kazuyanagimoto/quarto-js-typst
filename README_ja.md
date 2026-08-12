@@ -241,6 +241,13 @@ Quarto の Typst パイプラインとの接続で、`js` の既定から変更�
    `\arrayrulewidth` = 0.4pt 相当）に細くしているだけです。LaTeX の `tabular` は
    `\hline` や `|` を書かない限り罫線を引かないので、全格子は jsarticle 由来では
    ありません。`js` の見た目に戻すには `table-style: grid` を指定してください。
+6. **定理の statement を本文書体に戻す** — Quarto の既定の定理見た目（`simple`）は
+   欧文の慣例に従って statement 全体を `emph()` で囲み、`js` は和文の強調を
+   イタリックではなく書体の切り替え（ゴシック）で表します。この二つが重なると
+   statement が丸ごとゴシックになります。テンプレートでは theorion が出す環境の
+   figure の内側で本文書体に戻すので、statement は明朝の立体、ラベルは太字
+   ゴシック、欧文はイタリックのままになります。statement の中の強調はその分だけ
+   区別が付かなくなります。
 
 `js` パッケージ本体は同梱しておらず、`@preview/js:0.1.3` として
 [Typst Universe](https://typst.app/universe/package/js) から取得します。初回の
@@ -267,6 +274,7 @@ quarto call typst-gather
 - [tests/brand/](tests/brand/) — `_brand.yml` のフォント・色の反映
 - [tests/macros.qmd](tests/macros.qmd) — ruby / kintou / noindent / TeX の span と shortcode
 - [tests/tables.qmd](tests/tables.qmd) — `table-style` の 3 種類（`-M table-style:grid` などで切り替え）
+- [tests/theorems.qmd](tests/theorems.qmd) — crossref の定理環境と証明系の環境
 - [tests/jsbook-single.qmd](tests/jsbook-single.qmd) — book プロジェクトでない `jsbook-typst`
 - [tests/book-mode.qmd](tests/book-mode.qmd) — `jsarticle-typst` の `book: true`
 - [template.qmd](template.qmd) — `jsarticle-typst` のデモ

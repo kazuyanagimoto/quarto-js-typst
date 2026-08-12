@@ -249,6 +249,14 @@ What is changed from the `js` defaults to fit Quarto's Typst pipeline:
    `\arrayrulewidth`, 0.4pt). LaTeX's `tabular` draws nothing unless `\hline` or
    `|` asks for it, so the boxed look does not come from jsarticle. Use
    `table-style: grid` for the `js` look.
+6. **Theorem statements keep the body font** — Quarto's default theorem
+   appearance (`simple`) wraps the whole statement in `emph()`, following the
+   latin convention of setting theorems in italics, and `js` renders emphasis in
+   gothic because Japanese swaps the typeface instead of slanting it. Together
+   they set entire statements in gothic. The templates put the body font back
+   inside theorion's environment figures, so a statement is mincho and upright
+   while its label stays bold gothic and latin text stays italic. Emphasis
+   nested inside a statement is therefore not set off from the rest of it.
 
 The `js` package itself is not vendored: it is fetched from
 [Typst Universe](https://typst.app/universe/package/js) as `@preview/js:0.1.3`.
@@ -280,6 +288,8 @@ to vendor the package into that extension's `typst/packages/`.
   spans and shortcodes
 - [tests/tables.qmd](tests/tables.qmd) — the three `table-style` values (switch
   with `-M table-style:grid` and so on)
+- [tests/theorems.qmd](tests/theorems.qmd) — the crossref theorem environments
+  and the proof-like ones
 - [tests/jsbook-single.qmd](tests/jsbook-single.qmd) — `jsbook-typst` outside a
   book project
 - [tests/book-mode.qmd](tests/book-mode.qmd) — `book: true` in `jsarticle-typst`
