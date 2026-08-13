@@ -12,3 +12,4 @@ tests/book/_book/
 
 /.quarto/
 *.pdf
+/.luarc.json
