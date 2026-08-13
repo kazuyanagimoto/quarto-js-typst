@@ -91,6 +91,97 @@ local function kintou(el)
   return el.content
 end
 
+-- Typst cannot carry a paragraph across block math (typst/typst#3206): the
+-- text after `$ ... $` is typeset as a fresh paragraph, and with the
+-- all-paragraphs first-line indent of `js` it gains a 1em indent that the
+-- LaTeX classes would not give it. Pandoc still keeps such a continuation
+-- (no blank line after the closing `$$`) in the same Para as the math, so
+-- the LaTeX semantics can be read off the AST: wrap the continuation in
+-- `#noindent[...]`. Text after a blank line arrives as its own Para and
+-- keeps its indent, as in LaTeX.
+--
+-- By the post-quarto stage a labeled equation is no longer a bare Math: the
+-- crossref filter has bracketed it as
+--   RawInline "#math.equation(block: true, ..., ["  Math  RawInline " ])<eq-..>"
+-- so that whole cluster has to be treated as one display-math unit, or the
+-- `#noindent[` would land inside the wrapper and unbalance its delimiters.
+local function is_display_math(inline)
+  return inline.t == "Math" and inline.mathtype == "DisplayMath"
+end
+
+local function is_typst_raw(inline, pattern)
+  return inline.t == "RawInline"
+    and (inline.format == "typst" or inline.format == "typst-text")
+    and inline.text:match(pattern) ~= nil
+end
+
+local function is_equation_open(inline)
+  return is_typst_raw(inline, "^#math%.equation%(block: true")
+end
+
+local function is_equation_close(inline)
+  return is_typst_raw(inline, "^%s*%]%)")
+end
+
+local function is_inline_space(inline)
+  return inline.t == "Space" or inline.t == "SoftBreak" or inline.t == "LineBreak"
+end
+
+local function unindent_math_continuations(el)
+  local content = el.content
+  local result = pandoc.List()
+  local open = false
+  local changed = false
+  local i = 1
+
+  while i <= #content do
+    local inline = content[i]
+    if is_display_math(inline) or is_equation_open(inline) then
+      -- Between two display maths the bracket has to close and reopen so
+      -- that the math itself stays at the top level of the paragraph.
+      if open then
+        result:insert(pandoc.RawInline("typst", "]"))
+        open = false
+      end
+      if is_equation_open(inline) then
+        -- Copy the crossref wrapper through to its closing raw.
+        repeat
+          result:insert(content[i])
+          i = i + 1
+        until i > #content or is_equation_close(content[i - 1])
+      else
+        result:insert(inline)
+        i = i + 1
+      end
+      while i <= #content and is_inline_space(content[i]) do
+        result:insert(content[i])
+        i = i + 1
+      end
+      if
+        i <= #content
+        and not is_display_math(content[i])
+        and not is_equation_open(content[i])
+      then
+        result:insert(pandoc.RawInline("typst", "#noindent["))
+        open = true
+        changed = true
+      end
+    else
+      result:insert(inline)
+      i = i + 1
+    end
+  end
+
+  if open then
+    result:insert(pandoc.RawInline("typst", "]"))
+  end
+
+  if changed then
+    return pandoc.Para(result)
+  end
+  return nil
+end
+
 return {
   Span = function(el)
     if el.classes:includes("ruby") then
@@ -113,5 +204,12 @@ return {
     blocks:extend(el.content)
     blocks:insert(pandoc.RawBlock("typst", "]"))
     return blocks
+  end,
+
+  Para = function(el)
+    if not quarto.doc.is_format("typst") then
+      return nil
+    end
+    return unindent_math_continuations(el)
   end,
 }
