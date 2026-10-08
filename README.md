@@ -152,6 +152,10 @@ The formats default to `lang: ja`, `number-sections: true` and
 `section-numbering: "1.1.1"`, so sections are numbered as in jsarticle / jsbook
 and references read 図 1, 表 1, 式 1.
 
+In `jsarticle-typst`, `number-depth` stops section numbering below the given
+level (Typst would otherwise repeat the last symbol of the pattern), and lists
+start at the paragraph indent, so that `a.` / `b.` items line up with the text.
+
 ## `_brand.yml` support
 
 A `_brand.yml` in the project is honoured to the same extent as in the stock
@@ -286,6 +290,10 @@ to vendor the package into that extension's `typst/packages/`.
 - [tests/brand/](tests/brand/) — fonts and colours from `_brand.yml`
 - [tests/macros.qmd](tests/macros.qmd) — the ruby / kintou / noindent / TeX
   spans and shortcodes
+- [tests/math-continuation.qmd](tests/math-continuation.qmd) — text that
+  continues a paragraph or a list item after display math is not indented
+- [tests/number-depth.qmd](tests/number-depth.qmd) — `number-depth` and the
+  list indent in `jsarticle-typst`
 - [tests/tables.qmd](tests/tables.qmd) — the three `table-style` values (switch
   with `-M table-style:grid` and so on)
 - [tests/theorems.qmd](tests/theorems.qmd) — the crossref theorem environments

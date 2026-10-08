@@ -112,6 +112,9 @@ $endif$
 $if(section-numbering)$
   sectionnumbering: "$section-numbering$",
 $endif$
+$if(number-depth)$
+  section-depth: $number-depth$,
+$endif$
 $if(page-numbering)$
   page-numbering: "$page-numbering$",
 $endif$

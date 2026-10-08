@@ -97,6 +97,18 @@
 
 #let _color(value) = if value == none { none } else { rgb(_to-str(value)) }
 
+// Quarto's `number-depth` never reaches Typst, and a shorter numbering pattern
+// does not limit the depth either: Typst repeats the pattern's last symbol for
+// deeper headings ("1.A" numbers a level-3 heading as 1.A.A). Wrapping the
+// pattern in a function is the only way to stop numbering past a given level.
+#let _depth-numbering(pattern, depth) = {
+  if pattern == none or depth == none {
+    pattern
+  } else {
+    (..n) => if n.pos().len() <= depth { numbering(pattern, ..n.pos()) }
+  }
+}
+
 // ------------------------------------------------------------- title block
 
 #let js-title-block(
@@ -196,6 +208,7 @@
   cjkheight: 0.88,
   non-cjk: auto,
   sectionnumbering: none,
+  section-depth: none,
   page-numbering: "1",
   toc: false,
   toc_title: none,
@@ -259,9 +272,14 @@
       // --- Quarto compatibility fixes, applied after `js`'s own rules -------
       set text(region: region)
       set page(numbering: page-numbering)
-      set heading(numbering: sectionnumbering)
+      set heading(numbering: _depth-numbering(sectionnumbering, section-depth))
       // `js` sets `supplement: none`; Quarto needs the 図/表/式 prefixes back.
       set ref(supplement: auto)
+
+      // Lists start at the paragraph indent (1em) instead of hanging into the
+      // margin, so that a./b. items inside a statement line up with its text.
+      set enum(indent: 1em)
+      set list(indent: 1em)
 
       // Full font fallback chains (`js` only saw the first family of each).
       set text(font: serif-list)
