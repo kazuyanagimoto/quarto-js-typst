@@ -98,7 +98,9 @@ end
 -- (no blank line after the closing `$$`) in the same Para as the math, so
 -- the LaTeX semantics can be read off the AST: wrap the continuation in
 -- `#noindent[...]`. Text after a blank line arrives as its own Para and
--- keeps its indent, as in LaTeX.
+-- keeps its indent, as in LaTeX. An item of a tight list holds its text in
+-- a Plain instead of a Para, and the continuation there is indented in the
+-- same way, so both are handled.
 --
 -- By the post-quarto stage a labeled equation is no longer a bare Math: the
 -- crossref filter has bracketed it as
@@ -177,7 +179,8 @@ local function unindent_math_continuations(el)
   end
 
   if changed then
-    return pandoc.Para(result)
+    el.content = result
+    return el
   end
   return nil
 end
@@ -207,6 +210,13 @@ return {
   end,
 
   Para = function(el)
+    if not quarto.doc.is_format("typst") then
+      return nil
+    end
+    return unindent_math_continuations(el)
+  end,
+
+  Plain = function(el)
     if not quarto.doc.is_format("typst") then
       return nil
     end
