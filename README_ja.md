@@ -152,8 +152,7 @@ Quarto 標準のオプション（`toc`, `number-sections`, `section-numbering`,
 どちらのフォーマットでも、`number-depth` で番号を付ける見出しの深さを制限できます
 （何もしなければ Typst は番号の書式の最後の記号を繰り返します）。それより深い
 見出しへの参照は、LaTeX の `\ref` と同じく、それを含む節の番号になります。
-`jsarticle-typst` では、箇条書きは段落の字下げの位置から始まり、`a.` / `b.` の
-項目が本文と揃います。
+箇条書きは段落の字下げの位置から始まり、`a.` / `b.` の項目が本文と揃います。
 
 ## `_brand.yml` 対応
 
@@ -281,7 +280,7 @@ quarto call typst-gather
 - [tests/macros.qmd](tests/macros.qmd) — ruby / kintou / noindent / TeX の span と shortcode
 - [tests/math-continuation.qmd](tests/math-continuation.qmd) — 数式の後に段落や箇条書きの項目が続くとき字下げしない
 - [tests/number-depth.qmd](tests/number-depth.qmd) — `jsarticle-typst` の `number-depth` と箇条書きの字下げ
-- [tests/number-depth-book.qmd](tests/number-depth-book.qmd) — `jsbook-typst` の `number-depth`
+- [tests/number-depth-book.qmd](tests/number-depth-book.qmd) — `jsbook-typst` の `number-depth` と箇条書きの字下げ
 - [tests/tables.qmd](tests/tables.qmd) — `table-style` の 3 種類（`-M table-style:grid` などで切り替え）
 - [tests/theorems.qmd](tests/theorems.qmd) — crossref の定理環境と証明系の環境
 - [tests/jsbook-single.qmd](tests/jsbook-single.qmd) — book プロジェクトでない `jsbook-typst`

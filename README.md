@@ -155,8 +155,8 @@ and references read 図 1, 表 1, 式 1.
 In both formats, `number-depth` stops section numbering below the given level
 (Typst would otherwise repeat the last symbol of the pattern). A reference to a
 heading below that level gives the number of the enclosing section, as `\ref`
-does in LaTeX. In `jsarticle-typst`, lists start at the paragraph indent, so
-that `a.` / `b.` items line up with the text.
+does in LaTeX. Lists start at the paragraph indent, so that `a.` / `b.` items
+line up with the text.
 
 ## `_brand.yml` support
 
@@ -297,7 +297,7 @@ to vendor the package into that extension's `typst/packages/`.
 - [tests/number-depth.qmd](tests/number-depth.qmd) — `number-depth` and the
   list indent in `jsarticle-typst`
 - [tests/number-depth-book.qmd](tests/number-depth-book.qmd) — `number-depth`
-  in `jsbook-typst`
+  and the list indent in `jsbook-typst`
 - [tests/tables.qmd](tests/tables.qmd) — the three `table-style` values (switch
   with `-M table-style:grid` and so on)
 - [tests/theorems.qmd](tests/theorems.qmd) — the crossref theorem environments

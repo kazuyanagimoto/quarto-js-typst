@@ -277,6 +277,11 @@
       // `js` sets `supplement: none`; Quarto needs the 図/表 prefixes back.
       set ref(supplement: auto)
 
+      // Lists start at the paragraph indent (1em) instead of hanging into the
+      // margin, so that a./b. items inside a statement line up with its text.
+      set enum(indent: 1em)
+      set list(indent: 1em)
+
       // Full font fallback chains (`js` only saw the first family of each).
       set text(font: serif-list)
       show strong: set text(font: sans-list)
