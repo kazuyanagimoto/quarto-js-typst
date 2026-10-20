@@ -89,6 +89,36 @@
 
 #let _color(value) = if value == none { none } else { rgb(_to-str(value)) }
 
+// Quarto's `number-depth` never reaches Typst, and a shorter numbering pattern
+// does not limit the depth either: Typst repeats the pattern's last symbol for
+// deeper headings ("1.A" numbers a level-3 heading as 1.A.A). Headings below
+// `depth` are made unnumbered instead, as `{.unnumbered}` would make them, so
+// that the heading rules and the running heads drop the number as well. Being a
+// show-set rule, it also wins over the `set heading(numbering: "A.1.1")` that
+// jsbook-appendix applies later.
+#let _number-depth(depth, body) = {
+  if depth == none or depth >= 6 { return body }
+  let deeper = range(depth + 1, 7).map(level => heading.where(level: level))
+  show selector.or(..deeper): set heading(numbering: none)
+  // A reference to such a heading would be an error, since it has no number.
+  // LaTeX's \ref gives the number of the enclosing section there; so does this.
+  show ref: it => {
+    let target = it.element
+    if (
+      target == none or target.func() != heading
+        or target.numbering != none or target.level <= depth
+    ) { return it }
+    let parent = query(selector(heading).before(target.location()))
+      .filter(h => h.level <= depth and h.numbering != none)
+      .at(-1, default: none)
+    if parent == none { return it }
+    let number = numbering(parent.numbering, ..counter(heading).at(parent.location()))
+    let supplement = if it.supplement == auto { target.supplement } else { it.supplement }
+    link(target.location(), if supplement in (none, []) { number } else { [#supplement~#number] })
+  }
+  body
+}
+
 // -------------------------------------------------------- parts and matters
 
 // Part headings are ordinary level-1 headings tagged with a sentinel
@@ -162,6 +192,7 @@
   part-prefix: "第",
   part-suffix: "部",
   sectionnumbering: "1.1.1",
+  section-depth: none,
   toc: true,
   toc_title: none,
   toc_depth: none,
@@ -242,6 +273,7 @@
     {
       set text(region: region)
       set heading(numbering: sectionnumbering)
+      show: _number-depth.with(section-depth)
       // `js` sets `supplement: none`; Quarto needs the 図/表 prefixes back.
       set ref(supplement: auto)
 

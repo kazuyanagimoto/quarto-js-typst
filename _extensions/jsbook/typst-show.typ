@@ -124,6 +124,9 @@ $endif$
 $if(section-numbering)$
   sectionnumbering: "$section-numbering$",
 $endif$
+$if(number-depth)$
+  section-depth: $number-depth$,
+$endif$
 $if(toc)$
   toc: $toc$,
 $endif$
